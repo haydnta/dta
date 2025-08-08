@@ -23,7 +23,6 @@
 </head>
 <body>
     <div class="flex h-screen">
-        <!-- Sidebar -->
         <aside class="w-72 sidebar flex flex-col text-gray-300">
             <div class="p-6 border-b border-gray-700">
                 <h1 class="text-2xl font-extrabold text-white">Talent<span class="text-blue-400">Sphere</span></h1>
@@ -71,9 +70,7 @@
             </div>
         </aside>
 
-        <!-- Konten Utama -->
         <main class="flex-1 p-10 overflow-y-auto">
-            <!-- Konten Dashboard -->
             <div id="content-dashboard" class="content-view">
                 <header class="mb-8">
                     <h2 class="text-4xl font-extrabold text-gray-800">Your Dashboard</h2>
@@ -83,13 +80,11 @@
                     <h3 class="font-bold text-xl text-gray-800 mb-4">Your Potential Career Path</h3>
                     <div class="w-full h-96">
                         <svg width="100%" height="100%" viewBox="0 0 800 400">
-                            <!-- Garis Penghubung -->
                             <line x1="150" y1="200" x2="400" y2="100" stroke="#cbd5e1" stroke-width="2" class="graph-line"/>
                             <line x1="150" y1="200" x2="400" y2="300" stroke="#cbd5e1" stroke-width="2" class="graph-line"/>
                             <line x1="400" y1="100" x2="650" y2="200" stroke="#cbd5e1" stroke-width="2" class="graph-line"/>
                             <line x1="400" y1="300" x2="650" y2="200" stroke="#cbd5e1" stroke-width="2" class="graph-line"/>
 
-                            <!-- Node -->
                             <g class="graph-node">
                                 <circle cx="150" cy="200" r="60" fill="#2563eb"/>
                                 <text x="150" y="195" font-family="Inter" font-size="16" fill="white" text-anchor="middle" font-weight="bold">You</text>
@@ -115,7 +110,6 @@
                 </div>
             </div>
 
-            <!-- Konten Career Hub -->
             <div id="content-careerhub" class="content-view hidden">
                 <header class="mb-8">
                     <h2 class="text-4xl font-extrabold text-gray-800">Career Hub</h2>
@@ -142,7 +136,6 @@
                 </div>
             </div>
 
-            <!-- Konten Build Team (Search) -->
             <div id="content-search" class="content-view hidden">
                  <header class="mb-8">
                     <h2 class="text-4xl font-extrabold text-gray-800">Build Team for a New Project</h2>
@@ -152,12 +145,11 @@
                     <div class="space-y-6">
                         <div>
                             <label class="block text-lg font-medium text-slate-700">Project Name</label>
-                            <input type="text" class="mt-1 block w-full md:w-1/2 border-slate-300 rounded-md shadow-sm p-3" placeholder="e.g., Project BGN">
+                            <input type="text" class="mt-1 block w-full md:w-1/2 border-slate-300 rounded-md shadow-sm p-3" placeholder="e.g., Project Phoenix">
                         </div>
                         <div class="pt-6 border-t">
                             <h3 class="text-lg font-medium text-slate-800">Team Composition</h3>
                             <div id="role-composition-container" class="mt-4 space-y-4">
-                                <!-- Role blocks will be added here -->
                                 <div class="bg-slate-50 p-4 rounded-lg border">
                                     <select class="block w-full border-slate-300 rounded-md mb-3">
                                         <option>Backend Engineer</option>
@@ -178,12 +170,11 @@
                 </div>
             </div>
             
-            <!-- Konten My Profile -->
             <div id="content-profile" class="content-view hidden">
                  <header class="mb-8 flex justify-between items-center">
                     <div>
                         <h2 class="text-4xl font-extrabold text-gray-800">My Profile</h2>
-                        <p class="text-slate-500 mt-2">Keep your profile updated to get the best recommendations.</p>
+                        <p class="text-slate-500 mt-2">This is your complete talent dossier.</p>
                     </div>
                     <button id="edit-profile-btn" class="bg-blue-100 text-blue-700 px-5 py-2 rounded-lg font-semibold hover:bg-blue-200 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
@@ -191,42 +182,68 @@
                     </button>
                 </header>
                 <div class="bg-white p-8 rounded-xl shadow-sm border">
-                    <div class="flex items-center space-x-8 pb-8 border-b">
-                        <img id="profile-main-avatar" class="h-32 w-32 rounded-full object-cover" src="" alt="Profile Avatar">
-                        <div>
+                    <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8 pb-8 border-b">
+                        <img id="profile-main-avatar" class="h-32 w-32 rounded-full object-cover ring-4 ring-blue-100" src="" alt="Profile Avatar">
+                        <div class="text-center md:text-left">
                             <h3 id="profile-main-name" class="text-3xl font-bold text-gray-800"></h3>
                             <p id="profile-main-title" class="text-xl text-slate-600"></p>
+                            <div class="mt-2">
+                                <p class="text-sm text-slate-500">Employee ID: <span id="profile-id" class="font-medium text-slate-600"></span></p>
+                            </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mt-8">
-                        <div>
-                            <h4 class="font-semibold text-lg text-slate-800 mb-3">Details</h4>
-                            <div class="space-y-4 text-slate-600">
-                                <p><strong class="w-32 inline-block">Employee ID:</strong> <span id="profile-id"></span></p>
-                                <p><strong class="w-32 inline-block">Grade:</strong> <span id="profile-grade"></span></p>
-                                <p><strong class="w-32 inline-block">Education:</strong> <span id="profile-education"></span></p>
+                    <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-1 space-y-8">
+                            <div class="p-4 bg-slate-50 rounded-lg border">
+                                <h4 class="font-bold text-slate-800 mb-2">Position Details</h4>
+                                <div class="space-y-2 text-sm text-slate-600">
+                                    <p><strong>Level:</strong> <span id="profile-level"></span></p>
+                                    <p><strong>Grade:</strong> <span id="profile-grade"></span></p>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-slate-50 rounded-lg border">
+                                <h4 class="font-bold text-slate-800 mb-2">Education</h4>
+                                <p class="text-sm text-slate-600" id="profile-education"></p>
+                            </div>
+                             <div class="p-4 bg-slate-50 rounded-lg border">
+                                <h4 class="font-bold text-slate-800 mb-2">Awards</h4>
+                                <p class="text-sm text-slate-600">Employee of the Quarter (Q2 2024)</p>
                             </div>
                         </div>
-                        <div>
-                            <h4 class="font-semibold text-lg text-slate-800 mb-3">Skills</h4>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">Java</span>
-                                <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">Spring Boot</span>
-                                <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">SQL</span>
+                        <div class="lg:col-span-2 space-y-8">
+                             <div class="p-4 bg-slate-50 rounded-lg border">
+                                <h4 class="font-bold text-slate-800 mb-3">Performance & Assessment</h4>
+                                <div class="flex items-center space-x-8">
+                                    <div>
+                                        <p class="text-sm text-slate-500">Performance Appraisal (2024)</p>
+                                        <p class="text-2xl font-bold text-emerald-600">4.5 / 5.0</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-slate-500">Leadership Assessment</p>
+                                        <p class="text-2xl font-bold text-sky-600">88 / 100</p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <h4 class="font-semibold text-lg text-slate-800 mb-3">Certifications</h4>
-                             <ul class="list-disc list-inside text-slate-600 space-y-2">
-                                <li>Oracle Certified Professional, Java SE 8 Programmer</li>
-                                <li>AWS Certified Solutions Architect – Associate</li>
-                            </ul>
+                            <div class="p-4 bg-slate-50 rounded-lg border">
+                                <h4 class="font-bold text-slate-800 mb-3">Skills</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">Java</span>
+                                    <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">Spring Boot</span>
+                                    <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">SQL</span>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-slate-50 rounded-lg border">
+                                <h4 class="font-bold text-slate-800 mb-3">Certifications</h4>
+                                 <ul class="list-disc list-inside text-slate-600 space-y-2 text-sm">
+                                    <li>Oracle Certified Professional, Java SE 8 Programmer</li>
+                                    <li>AWS Certified Solutions Architect – Associate</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Konten Fill Role -->
             <div id="content-role" class="content-view hidden">
                 <header class="mb-8">
                     <h2 class="text-4xl font-extrabold text-gray-800">Fill a Strategic Role</h2>
@@ -242,7 +259,6 @@
                     </div>
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">Top Recommended Candidates</h3>
                     <div class="space-y-4">
-                        <!-- Kandidat 1 -->
                         <div class="flex items-center justify-between p-4 border border-slate-200 rounded-lg card bg-slate-50">
                             <div class="flex items-center">
                                 <img class="h-12 w-12 rounded-full object-cover" src="https://placehold.co/100x100/DCEFDC/38A169?text=C" alt="Citra Avatar">
@@ -250,38 +266,6 @@
                                     <p class="font-bold text-gray-800">Citra Dewi</p>
                                     <p class="text-sm text-slate-500">Product Manager</p>
                                 </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-semibold text-emerald-600">Match Score: 92%</p>
-                                <p class="text-xs text-slate-500">Top Skill: Agile Methodology</p>
-                            </div>
-                        </div>
-                        <!-- Kandidat 2 -->
-                        <div class="flex items-center justify-between p-4 border border-slate-200 rounded-lg card bg-slate-50">
-                            <div class="flex items-center">
-                                <img class="h-12 w-12 rounded-full object-cover" src="https://placehold.co/100x100/FEEBC8/DD6B20?text=A" alt="Andi Avatar">
-                                <div class="ml-4">
-                                    <p class="font-bold text-gray-800">Andi Pratama</p>
-                                    <p class="text-sm text-slate-500">Jr. Product Manager</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-semibold text-amber-600">Match Score: 85%</p>
-                                <p class="text-xs text-slate-500">Recommended by Budi S.</p>
-                            </div>
-                        </div>
-                         <!-- Kandidat 3 -->
-                        <div class="flex items-center justify-between p-4 border border-slate-200 rounded-lg card bg-slate-50">
-                            <div class="flex items-center">
-                                <img class="h-12 w-12 rounded-full object-cover" src="https://placehold.co/100x100/C3DAFE/2A4365?text=R" alt="Rina Avatar">
-                                <div class="ml-4">
-                                    <p class="font-bold text-gray-800">Rina Lestari</p>
-                                    <p class="text-sm text-slate-500">Business Analyst</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-semibold text-yellow-500">Match Score: 78%</p>
-                                <p class="text-xs text-slate-500">High potential, needs mentoring</p>
                             </div>
                         </div>
                     </div>
@@ -306,6 +290,7 @@
             const profileId = document.getElementById('profile-id');
             const profileGrade = document.getElementById('profile-grade');
             const profileEducation = document.getElementById('profile-education');
+            const profileLevel = document.getElementById('profile-level');
             
             // Dashboard Graph Elements
             const graphUserTitle = document.getElementById('graph-user-title');
@@ -385,7 +370,8 @@
                 profileMainName.innerText = name;
                 profileMainTitle.innerText = title;
                 profileId.innerText = '12345';
-                profileGrade.innerText = 'Manager IV';
+                profileLevel.innerText = 'Manager';
+                profileGrade.innerText = 'IV';
                 profileEducation.innerText = 'S2 - Manajemen Bisnis';
                 
                 graphUserTitle.textContent = title;
@@ -406,7 +392,8 @@
                 profileMainName.innerText = name;
                 profileMainTitle.innerText = title;
                 profileId.innerText = '67890';
-                profileGrade.innerText = 'Staff III';
+                profileLevel.innerText = 'Entry-level';
+                profileGrade.innerText = 'III';
                 profileEducation.innerText = 'S1 - Teknik Informatika';
                 
                 graphUserTitle.textContent = title;
