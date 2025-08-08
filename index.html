@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Talent Allocator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .sidebar { background-color: #111827; }
+        .sidebar-link { transition: all 0.2s ease-in-out; position: relative; }
+        .sidebar-link:hover { background-color: #1f2937; }
+        .menu-active { background-color: #1e40af; color: white; }
+        .menu-active::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 60%; width: 4px; background-color: #60a5fa; border-radius: 0 4px 4px 0; }
+        .card { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .graph-node { transition: all 0.3s ease; cursor: pointer; }
+        .graph-node:hover { transform: scale(1.05); }
+        .graph-node:hover circle { filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.7)); }
+        .graph-line { transition: all 0.3s ease; }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-72 sidebar flex flex-col text-gray-300">
+            <div class="p-6 border-b border-gray-700">
+                <h1 class="text-2xl font-extrabold text-white">Talent<span class="text-blue-400">Sphere</span></h1>
+                <p class="text-xs text-gray-400">Dynamic Talent Marketplace</p>
+            </div>
+            <nav id="sidebar-menu" class="flex-1 p-4 space-y-2">
+                <a href="#" data-target="dashboard" class="nav-link sidebar-link menu-active flex items-center px-4 py-2.5 rounded-lg">
+                    <svg class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" data-target="careerhub" class="nav-link sidebar-link flex items-center px-4 py-2.5 rounded-lg">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
+                    <span>Career Hub</span>
+                </a>
+                <a href="#" data-target="profile" class="nav-link sidebar-link flex items-center px-4 py-2.5 rounded-lg">
+                    <svg class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                    <span>My Profile</span>
+                </a>
+                <div id="management-menu" class="pt-4 mt-4 border-t border-gray-700" style="display: none;">
+                    <h3 class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Management</h3>
+                    <div class="mt-2 space-y-2">
+                        <a href="#" data-target="search" class="nav-link sidebar-link flex items-center px-4 py-2.5 rounded-lg">
+                            <svg class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                            <span>Build Team</span>
+                        </a>
+                        <a href="#" data-target="role" class="nav-link sidebar-link flex items-center px-4 py-2.5 rounded-lg">
+                            <svg class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" /></svg>
+                            <span>Fill Role</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+            <div class="p-4 border-t border-gray-700">
+                <div class="flex items-center mb-4">
+                    <img id="user-avatar" class="h-10 w-10 rounded-full object-cover" src="" alt="User Avatar">
+                    <div class="ml-3">
+                        <p id="user-name" class="text-sm font-semibold text-white"></p>
+                        <p id="user-title" class="text-xs text-gray-400"></p>
+                    </div>
+                </div>
+                <button id="logout-btn" class="w-full flex items-center justify-center px-4 py-2 text-sm text-red-300 hover:bg-red-800 hover:text-white rounded-lg transition-colors">
+                    <svg class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" /></svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Konten Utama -->
+        <main class="flex-1 p-10 overflow-y-auto">
+            <!-- Konten Dashboard -->
+            <div id="content-dashboard" class="content-view">
+                <header class="mb-8">
+                    <h2 class="text-4xl font-extrabold text-gray-800">Your Dashboard</h2>
+                    <p class="text-slate-500 mt-2">Your personalized career overview and opportunities.</p>
+                </header>
+                <div class="bg-white p-6 rounded-xl shadow-sm border">
+                    <h3 class="font-bold text-xl text-gray-800 mb-4">Your Potential Career Path</h3>
+                    <div class="w-full h-96">
+                        <svg width="100%" height="100%" viewBox="0 0 800 400">
+                            <!-- Garis Penghubung -->
+                            <line x1="150" y1="200" x2="400" y2="100" stroke="#cbd5e1" stroke-width="2" class="graph-line"/>
+                            <line x1="150" y1="200" x2="400" y2="300" stroke="#cbd5e1" stroke-width="2" class="graph-line"/>
+                            <line x1="400" y1="100" x2="650" y2="200" stroke="#cbd5e1" stroke-width="2" class="graph-line"/>
+                            <line x1="400" y1="300" x2="650" y2="200" stroke="#cbd5e1" stroke-width="2" class="graph-line"/>
+
+                            <!-- Node -->
+                            <g class="graph-node">
+                                <circle cx="150" cy="200" r="60" fill="#2563eb"/>
+                                <text x="150" y="195" font-family="Inter" font-size="16" fill="white" text-anchor="middle" font-weight="bold">You</text>
+                                <text id="graph-user-title" x="150" y="215" font-family="Inter" font-size="12" fill="white" text-anchor="middle"></text>
+                            </g>
+                            <g class="graph-node">
+                                <circle cx="400" cy="100" r="60" fill="#475569"/>
+                                <text id="graph-path1-title" x="400" y="95" font-family="Inter" font-size="16" fill="white" text-anchor="middle" font-weight="bold"></text>
+                                <text id="graph-path1-match" x="400" y="115" font-family="Inter" font-size="12" fill="white" text-anchor="middle"></text>
+                            </g>
+                             <g class="graph-node">
+                                <circle cx="400" cy="300" r="60" fill="#475569"/>
+                                <text id="graph-path2-title" x="400" y="295" font-family="Inter" font-size="16" fill="white" text-anchor="middle" font-weight="bold"></text>
+                                <text id="graph-path2-match" x="400" y="315" font-family="Inter" font-size="12" fill="white" text-anchor="middle"></text>
+                            </g>
+                            <g class="graph-node">
+                                <circle cx="650" cy="200" r="60" fill="#475569"/>
+                                <text id="graph-path3-title" x="650" y="195" font-family="Inter" font-size="16" fill="white" text-anchor="middle" font-weight="bold"></text>
+                                <text id="graph-path3-match" x="650" y="215" font-family="Inter" font-size="12" fill="white" text-anchor="middle"></text>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Konten Career Hub -->
+            <div id="content-careerhub" class="content-view hidden">
+                <header class="mb-8">
+                    <h2 class="text-4xl font-extrabold text-gray-800">Career Hub</h2>
+                    <p class="text-slate-500 mt-2">Planning a career switch? Let's map your journey.</p>
+                </header>
+                <div class="bg-white p-8 rounded-xl shadow-sm border">
+                    <label class="block text-lg font-medium text-slate-700">I want to switch my career to...</label>
+                    <select id="career-switch-select" class="mt-2 block w-full md:w-1/2 border-slate-300 rounded-md shadow-sm text-lg p-3">
+                        <option value="">-- Select a Role --</option>
+                    </select>
+                    <div id="career-switch-result" class="mt-8 hidden">
+                        <h3 class="font-bold text-xl text-gray-800 mb-6">Your Roadmap to become a <span id="target-role" class="text-blue-600"></span></h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-semibold text-lg mb-3">Skills to Develop</h4>
+                                <div id="skills-to-develop" class="flex flex-wrap gap-3"></div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-3">Recommended Mentors</h4>
+                                <div id="recommended-mentors" class="space-y-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Konten Build Team (Search) -->
+            <div id="content-search" class="content-view hidden">
+                 <header class="mb-8">
+                    <h2 class="text-4xl font-extrabold text-gray-800">Build Team for a New Project</h2>
+                    <p class="text-slate-500 mt-2">Define the roles and skills needed, and we'll find the best talent for you.</p>
+                </header>
+                <div class="bg-white p-8 rounded-xl shadow-sm border">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-lg font-medium text-slate-700">Project Name</label>
+                            <input type="text" class="mt-1 block w-full md:w-1/2 border-slate-300 rounded-md shadow-sm p-3" placeholder="e.g., Project BGN">
+                        </div>
+                        <div class="pt-6 border-t">
+                            <h3 class="text-lg font-medium text-slate-800">Team Composition</h3>
+                            <div id="role-composition-container" class="mt-4 space-y-4">
+                                <!-- Role blocks will be added here -->
+                                <div class="bg-slate-50 p-4 rounded-lg border">
+                                    <select class="block w-full border-slate-300 rounded-md mb-3">
+                                        <option>Backend Engineer</option>
+                                        <option>Frontend Engineer</option>
+                                    </select>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">Java</span>
+                                        <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">SQL</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="add-role-btn" class="mt-4 bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300 text-sm">+ Add Role</button>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-6 border-t text-right">
+                        <button class="bg-blue-700 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-800">Find Recommendations</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Konten My Profile -->
+            <div id="content-profile" class="content-view hidden">
+                 <header class="mb-8 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-4xl font-extrabold text-gray-800">My Profile</h2>
+                        <p class="text-slate-500 mt-2">Keep your profile updated to get the best recommendations.</p>
+                    </div>
+                    <button id="edit-profile-btn" class="bg-blue-100 text-blue-700 px-5 py-2 rounded-lg font-semibold hover:bg-blue-200 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
+                        Edit Profile
+                    </button>
+                </header>
+                <div class="bg-white p-8 rounded-xl shadow-sm border">
+                    <div class="flex items-center space-x-8 pb-8 border-b">
+                        <img id="profile-main-avatar" class="h-32 w-32 rounded-full object-cover" src="" alt="Profile Avatar">
+                        <div>
+                            <h3 id="profile-main-name" class="text-3xl font-bold text-gray-800"></h3>
+                            <p id="profile-main-title" class="text-xl text-slate-600"></p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mt-8">
+                        <div>
+                            <h4 class="font-semibold text-lg text-slate-800 mb-3">Details</h4>
+                            <div class="space-y-4 text-slate-600">
+                                <p><strong class="w-32 inline-block">Employee ID:</strong> <span id="profile-id"></span></p>
+                                <p><strong class="w-32 inline-block">Grade:</strong> <span id="profile-grade"></span></p>
+                                <p><strong class="w-32 inline-block">Education:</strong> <span id="profile-education"></span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg text-slate-800 mb-3">Skills</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">Java</span>
+                                <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">Spring Boot</span>
+                                <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">SQL</span>
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <h4 class="font-semibold text-lg text-slate-800 mb-3">Certifications</h4>
+                             <ul class="list-disc list-inside text-slate-600 space-y-2">
+                                <li>Oracle Certified Professional, Java SE 8 Programmer</li>
+                                <li>AWS Certified Solutions Architect – Associate</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Konten Fill Role -->
+            <div id="content-role" class="content-view hidden">
+                <header class="mb-8">
+                    <h2 class="text-4xl font-extrabold text-gray-800">Fill a Strategic Role</h2>
+                    <p class="text-slate-500 mt-2">See the best recommended internal candidates to fill key roles.</p>
+                </header>
+                <div class="bg-white p-8 rounded-xl shadow-sm border">
+                    <div class="mb-6 max-w-sm">
+                        <label class="block text-sm font-medium text-slate-700">Select a Role</label>
+                        <select class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 rounded-md">
+                            <option>Senior Product Manager</option>
+                            <option>Lead Data Scientist</option>
+                        </select>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Top Recommended Candidates</h3>
+                    <div class="space-y-4">
+                        <!-- Kandidat 1 -->
+                        <div class="flex items-center justify-between p-4 border border-slate-200 rounded-lg card bg-slate-50">
+                            <div class="flex items-center">
+                                <img class="h-12 w-12 rounded-full object-cover" src="https://placehold.co/100x100/DCEFDC/38A169?text=C" alt="Citra Avatar">
+                                <div class="ml-4">
+                                    <p class="font-bold text-gray-800">Citra Dewi</p>
+                                    <p class="text-sm text-slate-500">Product Manager</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold text-emerald-600">Match Score: 92%</p>
+                                <p class="text-xs text-slate-500">Top Skill: Agile Methodology</p>
+                            </div>
+                        </div>
+                        <!-- Kandidat 2 -->
+                        <div class="flex items-center justify-between p-4 border border-slate-200 rounded-lg card bg-slate-50">
+                            <div class="flex items-center">
+                                <img class="h-12 w-12 rounded-full object-cover" src="https://placehold.co/100x100/FEEBC8/DD6B20?text=A" alt="Andi Avatar">
+                                <div class="ml-4">
+                                    <p class="font-bold text-gray-800">Andi Pratama</p>
+                                    <p class="text-sm text-slate-500">Jr. Product Manager</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold text-amber-600">Match Score: 85%</p>
+                                <p class="text-xs text-slate-500">Recommended by Budi S.</p>
+                            </div>
+                        </div>
+                         <!-- Kandidat 3 -->
+                        <div class="flex items-center justify-between p-4 border border-slate-200 rounded-lg card bg-slate-50">
+                            <div class="flex items-center">
+                                <img class="h-12 w-12 rounded-full object-cover" src="https://placehold.co/100x100/C3DAFE/2A4365?text=R" alt="Rina Avatar">
+                                <div class="ml-4">
+                                    <p class="font-bold text-gray-800">Rina Lestari</p>
+                                    <p class="text-sm text-slate-500">Business Analyst</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold text-yellow-500">Match Score: 78%</p>
+                                <p class="text-xs text-slate-500">High potential, needs mentoring</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userRole = localStorage.getItem('userRole');
+            const managementMenu = document.getElementById('management-menu');
+            const userAvatar = document.getElementById('user-avatar');
+            const userName = document.getElementById('user-name');
+            const userTitle = document.getElementById('user-title');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            // Profile Page Elements
+            const profileMainAvatar = document.getElementById('profile-main-avatar');
+            const profileMainName = document.getElementById('profile-main-name');
+            const profileMainTitle = document.getElementById('profile-main-title');
+            const profileId = document.getElementById('profile-id');
+            const profileGrade = document.getElementById('profile-grade');
+            const profileEducation = document.getElementById('profile-education');
+            
+            // Dashboard Graph Elements
+            const graphUserTitle = document.getElementById('graph-user-title');
+            const graphPath1Title = document.getElementById('graph-path1-title');
+            const graphPath1Match = document.getElementById('graph-path1-match');
+            const graphPath2Title = document.getElementById('graph-path2-title');
+            const graphPath2Match = document.getElementById('graph-path2-match');
+            const graphPath3Title = document.getElementById('graph-path3-title');
+            const graphPath3Match = document.getElementById('graph-path3-match');
+
+            // Career Hub Elements
+            const careerSwitchSelect = document.getElementById('career-switch-select');
+
+            // Career Path Data
+            const careerPaths = {
+                manager: {
+                    path1_title: "Senior PM", path1_match: "Match: 90%",
+                    path2_title: "Program Manager", path2_match: "Match: 75%",
+                    path3_title: "Head of Product", path3_match: "Match: 65%"
+                },
+                talent: {
+                    path1_title: "Senior Eng.", path1_match: "Match: 85%",
+                    path2_title: "Data Analyst", path2_match: "Match: 60%",
+                    path3_title: "Tech Lead", path3_match: "Match: 70%"
+                }
+            };
+            
+            // Career Hub Options Data
+            const careerHubOptions = {
+                manager: [
+                    { value: "Senior Product Manager", text: "Senior Product Manager" },
+                    { value: "Program Manager", text: "Program Manager" }
+                ],
+                talent: [
+                    { value: "Product Manager", text: "Product Manager" },
+                    { value: "Data Scientist", text: "Data Scientist" }
+                ]
+            };
+
+            function updateCareerPathGraph(role) {
+                const pathData = careerPaths[role];
+                graphPath1Title.textContent = pathData.path1_title;
+                graphPath1Match.textContent = pathData.path1_match;
+                graphPath2Title.textContent = pathData.path2_title;
+                graphPath2Match.textContent = pathData.path2_match;
+                graphPath3Title.textContent = pathData.path3_title;
+                graphPath3Match.textContent = pathData.path3_match;
+            }
+
+            function populateCareerHub(role) {
+                const options = careerHubOptions[role];
+                careerSwitchSelect.innerHTML = '<option value="">-- Select a Role --</option>'; // Reset
+                options.forEach(opt => {
+                    const optionEl = document.createElement('option');
+                    optionEl.value = opt.value;
+                    optionEl.textContent = opt.text;
+                    careerSwitchSelect.appendChild(optionEl);
+                });
+            }
+
+            if (!userRole) {
+                window.location.href = './login.html';
+                return;
+            }
+
+            if (userRole === 'manager') {
+                managementMenu.style.display = 'block';
+                const name = 'Budi Setiawan';
+                const title = 'Project Manager';
+                const avatarUrl = 'https://placehold.co/100x100/93C5FD/1E40AF?text=M';
+                
+                userAvatar.src = avatarUrl;
+                userName.innerText = name;
+                userTitle.innerText = title;
+                
+                profileMainAvatar.src = avatarUrl;
+                profileMainName.innerText = name;
+                profileMainTitle.innerText = title;
+                profileId.innerText = '12345';
+                profileGrade.innerText = 'Manager IV';
+                profileEducation.innerText = 'S2 - Manajemen Bisnis';
+                
+                graphUserTitle.textContent = title;
+                updateCareerPathGraph('manager');
+                populateCareerHub('manager');
+
+            } else { // talent
+                managementMenu.style.display = 'none';
+                const name = 'Citra Dewi';
+                const title = 'Software Engineer';
+                const avatarUrl = 'https://placehold.co/100x100/DCEFDC/38A169?text=C';
+                
+                userAvatar.src = avatarUrl;
+                userName.innerText = name;
+                userTitle.innerText = title;
+
+                profileMainAvatar.src = avatarUrl;
+                profileMainName.innerText = name;
+                profileMainTitle.innerText = title;
+                profileId.innerText = '67890';
+                profileGrade.innerText = 'Staff III';
+                profileEducation.innerText = 'S1 - Teknik Informatika';
+                
+                graphUserTitle.textContent = title;
+                updateCareerPathGraph('talent');
+                populateCareerHub('talent');
+            }
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentViews = document.querySelectorAll('.content-view');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.dataset.target;
+                    navLinks.forEach(nav => nav.classList.remove('menu-active'));
+                    this.classList.add('menu-active');
+                    contentViews.forEach(view => view.classList.add('hidden'));
+                    document.getElementById('content-' + targetId).classList.remove('hidden');
+                });
+            });
+
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('userRole');
+                window.location.href = './login.html';
+            });
+
+            // Logic for Career Switch
+            const careerSwitchResult = document.getElementById('career-switch-result');
+            const targetRoleSpan = document.getElementById('target-role');
+            const skillsToDevelopContainer = document.getElementById('skills-to-develop');
+            const recommendedMentorsContainer = document.getElementById('recommended-mentors');
+            
+            const roadmaps = {
+                "Product Manager": {
+                    skills: ["Market Analysis", "Roadmapping", "User Interview", "Agile"],
+                    mentors: ["Budi Setiawan (Project Manager)", "Fara Anindita (UI/UX Designer)"]
+                },
+                "Data Scientist": {
+                    skills: ["Python", "Machine Learning", "Statistics", "SQL"],
+                    mentors: ["Andi Pratama (Data Analyst)", "Gilang Pratama (Backend Lead)"]
+                },
+                "Senior Product Manager": {
+                    skills: ["Go-to-Market Strategy", "P&L Management", "Stakeholder Alignment"],
+                    mentors: ["Head of Product", "VP of Engineering"]
+                },
+                "Program Manager": {
+                    skills: ["Cross-functional Leadership", "Risk Management", "Budgeting"],
+                    mentors: ["Director of Operations", "Senior PMO"]
+                }
+            };
+
+            careerSwitchSelect.addEventListener('change', function() {
+                const selectedRole = this.value;
+                if (selectedRole && roadmaps[selectedRole]) {
+                    const roadmap = roadmaps[selectedRole];
+                    targetRoleSpan.innerText = selectedRole;
+                    
+                    skillsToDevelopContainer.innerHTML = roadmap.skills.map(skill => `<span class="bg-amber-100 text-amber-800 text-sm font-medium px-4 py-2 rounded-full">${skill}</span>`).join('');
+                    recommendedMentorsContainer.innerHTML = roadmap.mentors.map(mentor => `<p class="text-slate-600">${mentor}</p>`).join('');
+
+                    careerSwitchResult.classList.remove('hidden');
+                } else {
+                    careerSwitchResult.classList.add('hidden');
+                }
+            });
+
+            // Logic for Build Team
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const buildTeamResult = document.getElementById('build-team-result');
+            analyzeBtn.addEventListener('click', function() {
+                buildTeamResult.classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
